@@ -10,6 +10,3 @@ __pycache__/
 
 # Ignore system files
 .DS_Store
-
-# ignore keys for local developments
-./test-images
