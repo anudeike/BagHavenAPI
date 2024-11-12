@@ -1,0 +1,15 @@
+# Ignore Python virtual environment folder
+venv/
+
+# Ignore Python bytecode files
+__pycache__/
+*.py[cod]
+
+# Ignore environment configuration files
+.env
+
+# Ignore system files
+.DS_Store
+
+# ignore keys for local developments
+./keys
