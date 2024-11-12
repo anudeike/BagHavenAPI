@@ -1,9 +1,49 @@
 from fastapi import FastAPI
+from dotenv import load_dotenv
+import os
+import requests
+import base64
+
+load_dotenv()
 
 app = FastAPI()
 
+# google vision image search
+def search_image_google_vision(image_path, api_key):
+    # Encode the image
+    with open(image_path, "rb") as image_file:
+        encoded_image = base64.b64encode(image_file.read()).decode('utf-8')
+
+    url = f"https://vision.googleapis.com/v1/images:annotate?key={api_key}"
+    headers = {"Content-Type": "application/json"}
+    data = {
+        "requests": [
+            {
+                "image": {"content": encoded_image},
+                "features": [{"type": "WEB_DETECTION"}]
+            }
+        ]
+    }
+    
+    response = requests.post(url, headers=headers, json=data)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return {"error": response.text}
 
 @app.get("/items/{item_id}")
 async def read_item(item_id):
     return {"item_id": item_id}
+
+@app.get("/googleVisionTest")
+async def get_parse_image():
+    
+    imagePath = "test-images\image.png"
+    GOOGLE_VISION_API_KEY = os.getenv("GOOGLE_VISION_API_KEY")
+
+    # call the vision api
+    search_image_google_vision(imagePath, GOOGLE_VISION_API_KEY)
+
+
+    return {"message": "success"}
 
