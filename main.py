@@ -47,3 +47,6 @@ async def get_parse_image():
 
     return {"message": "success"}
 
+@app.get("/")
+async def home():
+    return {"message": "you have reached the homee page. you shouldn't be here."}
