@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import os
 import requests
 import base64
+import json
 
 load_dotenv()
 
@@ -42,7 +43,11 @@ async def get_parse_image():
     GOOGLE_VISION_API_KEY = os.getenv("GOOGLE_VISION_API_KEY")
 
     # call the vision api
-    search_image_google_vision(imagePath, GOOGLE_VISION_API_KEY)
+    resp = search_image_google_vision(imagePath, GOOGLE_VISION_API_KEY)
+    
+    # write the response to a json file using json dumps
+    with open('response.json', 'w') as outfile:
+        json.dump(resp, outfile)
 
 
     return {"message": "success"}

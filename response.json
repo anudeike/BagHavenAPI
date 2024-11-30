@@ -1,0 +1,227 @@
+{
+  "responses": [
+    {
+      "webDetection": {
+        "webEntities": [
+          {
+            "entityId": "/g/11vqv59ql8",
+            "score": 0.7357,
+            "description": "Loungefly Studio Ghibli Ponyo Ramen Satchel Bag"
+          },
+          {
+            "entityId": "/g/125tbt6wr",
+            "score": 0.7177,
+            "description": "Loungefly"
+          },
+          {
+            "entityId": "/g/1ym_63bwc",
+            "score": 0.7142,
+            "description": "Hot Topic"
+          },
+          {
+            "entityId": "/g/11rd8zpx_q",
+            "score": 0.7068,
+            "description": "Mini Backpacks"
+          },
+          {
+            "entityId": "/m/01940j",
+            "score": 0.7064,
+            "description": "Backpack"
+          },
+          {
+            "entityId": "/m/0130kc",
+            "score": 0.6377,
+            "description": "Studio Ghibli"
+          },
+          {
+            "entityId": "/g/11dxd4y4yb",
+            "score": 0.542,
+            "description": "Studio Ghibli"
+          },
+          { "entityId": "/m/0jxy", "score": 0.5217, "description": "Anime" },
+          { "entityId": "/m/0n5v01m", "score": 0.5104, "description": "Bag" },
+          {
+            "entityId": "/m/080hkjn",
+            "score": 0.4753,
+            "description": "Handbag"
+          }
+        ],
+        "fullMatchingImages": [
+          {
+            "url": "https://i.ebayimg.com/00/s/MTU3M1gxMjAw/z/NxcAAOSwVx1jqz7D/$_57.JPG?set_id=880000500F"
+          },
+          {
+            "url": "https://cdn.media.amplience.net/s/hottopic/14907908_hi?$productMainDesktop$&fmt=auto"
+          },
+          {
+            "url": "https://i.ebayimg.com/images/g/NxcAAOSwVx1jqz7D/s-l1200.jpg"
+          },
+          {
+            "url": "https://cdn.media.amplience.net/s/hottopic/14907908_hi?h=630"
+          },
+          {
+            "url": "https://i.pinimg.com/474x/7b/5a/30/7b5a3077c47edaca009c52c0eaec8eaf.jpg"
+          },
+          {
+            "url": "https://cdn.media.amplience.net/s/hottopic/14907908_hi?h=512"
+          }
+        ],
+        "partialMatchingImages": [
+          {
+            "url": "https://i.ebayimg.com/images/g/NxcAAOSwVx1jqz7D/s-l400.jpg"
+          },
+          { "url": "https://cdn.media.amplience.net/s/hottopic/14907908_hi" }
+        ],
+        "pagesWithMatchingImages": [
+          {
+            "url": "https://www.magicalunahotel.com/?m=770855712",
+            "pageTitle": "Loungefly ponyo hotsell",
+            "partialMatchingImages": [
+              {
+                "url": "https://cdn.media.amplience.net/s/hottopic/14907908_hi"
+              }
+            ]
+          },
+          {
+            "url": "https://www.ateliermono.com/?a=770973412",
+            "pageTitle": "Ponyo 2025 loungefly backpack",
+            "partialMatchingImages": [
+              {
+                "url": "https://cdn.media.amplience.net/s/hottopic/14907908_hi"
+              }
+            ]
+          },
+          {
+            "url": "https://www.mediatics.ci/?m=336921511",
+            "pageTitle": "Ponyo loungefly shop",
+            "fullMatchingImages": [
+              {
+                "url": "https://i.ebayimg.com/images/g/NxcAAOSwVx1jqz7D/s-l1600.jpg"
+              }
+            ]
+          },
+          {
+            "url": "https://www.hottopic.com/product/studio-ghibli-ponyo-light-blue-mini-backpack/14907909.html",
+            "pageTitle": "Studio Ghibli Ponyo Light Blue Mini Backpack - Hot Topic",
+            "fullMatchingImages": [
+              {
+                "url": "https://cdn.media.amplience.net/s/hottopic/14907908_hi"
+              },
+              {
+                "url": "https://cdn.media.amplience.net/s/hottopic/14907908_hi?h=630"
+              },
+              {
+                "url": "https://cdn.media.amplience.net/s/hottopic/14907908_hi?h=512"
+              },
+              {
+                "url": "https://cdn.media.amplience.net/s/hottopic/14907908_hi?$productMainDesktop$&fmt=auto"
+              }
+            ]
+          },
+          {
+            "url": "https://latinbeer.au/?o=54755950400",
+            "pageTitle": "Loungefly anthropomorphic studio ghibli ponyo mini - latin beer",
+            "partialMatchingImages": [
+              {
+                "url": "https://cdn.media.amplience.net/s/hottopic/14907908_hi"
+              }
+            ]
+          },
+          {
+            "url": "http://laparrilla.co/?l=336921511",
+            "pageTitle": "Ponyo loungefly shop - LA PARRILLA",
+            "fullMatchingImages": [
+              {
+                "url": "https://i.ebayimg.com/images/g/NxcAAOSwVx1jqz7D/s-l1600.jpg"
+              }
+            ]
+          },
+          {
+            "url": "https://www.ebay.com/itm/125684412841",
+            "pageTitle": "RARE Studio Ghibli Ponyo Kawaii Anime Fish AOP Light Blue Mini ...",
+            "fullMatchingImages": [
+              {
+                "url": "https://i.ebayimg.com/images/g/NxcAAOSwVx1jqz7D/s-l1200.jpg"
+              },
+              {
+                "url": "https://i.ebayimg.com/images/g/NxcAAOSwVx1jqz7D/s-l400.jpg"
+              }
+            ]
+          },
+          {
+            "url": "https://www.expocenterolguin.com/ponyo-loungefly-2040493.html",
+            "pageTitle": "Ponyo loungefly - Women's handbags - Expocenter Olguin",
+            "fullMatchingImages": [
+              {
+                "url": "https://cdn.media.amplience.net/s/hottopic/14907908_hi?$productMainDesktop$&fmt=auto"
+              }
+            ]
+          },
+          {
+            "url": "https://www.ebay.co.uk/itm/125684403821",
+            "pageTitle": "RARE Studio Ghibli Ponyo Kawaii Anime Fish AOP Light Blue Mini ...",
+            "fullMatchingImages": [
+              {
+                "url": "https://i.ebayimg.com/images/g/NxcAAOSwVx1jqz7D/s-l400.jpg"
+              },
+              {
+                "url": "https://i.ebayimg.com/images/g/NxcAAOSwVx1jqz7D/s-l1200.jpg"
+              },
+              {
+                "url": "https://i.ebayimg.com/00/s/MTU3M1gxMjAw/z/NxcAAOSwVx1jqz7D/$_57.JPG?set_id=880000500F"
+              }
+            ]
+          },
+          {
+            "url": "https://www.ebay.com.au/itm/125684403821",
+            "pageTitle": "RARE Studio Ghibli Ponyo Kawaii Anime Fish AOP Light Blue Mini ...",
+            "fullMatchingImages": [
+              {
+                "url": "https://i.ebayimg.com/00/s/MTU3M1gxMjAw/z/NxcAAOSwVx1jqz7D/$_57.JPG?set_id=880000500F"
+              },
+              {
+                "url": "https://i.ebayimg.com/images/g/NxcAAOSwVx1jqz7D/s-l1200.jpg"
+              },
+              {
+                "url": "https://i.ebayimg.com/images/g/NxcAAOSwVx1jqz7D/s-l400.jpg"
+              }
+            ]
+          }
+        ],
+        "visuallySimilarImages": [
+          { "url": "https://ar.todomoda.com/media/wysiwyg/TM-INFA-MENU.png" },
+          {
+            "url": "https://lisafrank.com/cdn/shop/products/LFBK0001-LFLISAFRANKAOPIRIDESCENTMINIBACKPACK-107FRONT_1200x.jpg?v=1660332440"
+          },
+          {
+            "url": "https://i.etsystatic.com/8508888/r/il/6168fb/6093145195/il_fullxfull.6093145195_53nq.jpg"
+          },
+          {
+            "url": "https://lisafrank.com/cdn/shop/products/LFBK0001-LFLISAFRANKAOPIRIDESCENTMINIBACKPACK-108SIDE_1200x.jpg?v=1660332615"
+          },
+          {
+            "url": "https://shop.getty.edu/cdn/shop/files/7560bkpksafari_1_A_1600x.jpg?v=1721161281"
+          },
+          {
+            "url": "https://www.parents.com/thmb/CZimXMjnQJSyVAEs22uqnIoxmOM=/fit-in/1500x1000/filters:no_upscale():max_bytes(150000):strip_icc()/simple-modern-fletcher-kids-backpack-385a075746bb449fba2d1706bdfcc820.jpg"
+          },
+          {
+            "url": "https://cdn.media.amplience.net/s/hottopic/32080735_hi?$productTileDesktop$&fmt=auto"
+          },
+          {
+            "url": "https://s.yimg.com/ny/api/res/1.2/MtzNQyEdj4z9J7DJkG7R2g--/YXBwaWQ9aGlnaGxhbmRlcjt3PTY0MDtoPTc1OA--/https://s.yimg.com/os/creatr-uploaded-images/2023-08/6cb254f0-3ddc-11ee-b4ff-3d6295a2c968"
+          },
+          {
+            "url": "https://i.etsystatic.com/20715086/r/il/b97940/4080600855/il_fullxfull.4080600855_e3fd.jpg"
+          },
+          {
+            "url": "https://cdn.media.amplience.net/i/hottopic/32080735_av1?$productTileDesktop$&fmt=auto"
+          }
+        ],
+        "bestGuessLabels": [
+          { "label": "ponyo mini backpack", "languageCode": "en" }
+        ]
+      }
+    }
+  ]
+}
