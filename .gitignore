@@ -10,3 +10,6 @@ __pycache__/
 
 # Ignore system files
 .DS_Store
+
+# Ignore test json responses
+./jsonresponses
