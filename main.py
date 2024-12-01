@@ -142,8 +142,8 @@ async def generic_search(request: SearchRequest):
 
         # get the html of each product
         for product in productResults:
-            product["html"] = fetch_html(product["link"])
-            product["json_ld"] = extract_json_ld(product["html"])
+            productHtml = fetch_html(product["link"])
+            product["json_ld"] = extract_json_ld(productHtml)
         
         print(f"Product Search Results Amount: {len(productResults)}")
 
