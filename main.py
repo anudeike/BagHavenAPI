@@ -10,6 +10,8 @@ import json
 import time
 import aiohttp
 import asyncio
+import firebase_admin
+from firebase_admin import credentials, firestore
 
 load_dotenv()
 
@@ -19,9 +21,20 @@ app = FastAPI()
 SEARCH_ENGINE_ID_BAGHAVEN = os.getenv("SEARCH_ENGINE_ID_BAGHAVEN")
 GOOGLE_API_KEY = os.getenv("GOOGLE_VISION_API_KEY")
 
+# fetch firebase credentials
+print("Fetching firebase credentials...")
+cred = credentials.Certificate("credentials/bag-haven-qt9s4v-firebase-adminsdk-h9x05-e584032402.json")
+firebase_admin.initialize_app(cred)
+
+# intialize firestore
+print("Initializing firestore...")
+db = firestore.client()
+print("Initializing firestore done")
+
 class SearchRequest(BaseModel):
     query: str
     pages: int
+
 
 # google vision image search
 def search_image_google_vision(image_path, api_key):
@@ -46,32 +59,9 @@ def search_image_google_vision(image_path, api_key):
     else:
         return {"error": response.text}
 
-# search image google search 
-
-@app.get("/items/{item_id}")
-async def read_item(item_id):
-    return {"item_id": item_id}
-
-@app.get("/googleVisionTest")
-async def get_parse_image():
-    
-    imagePath = "test-images\image.png"
-    GOOGLE_VISION_API_KEY = os.getenv("GOOGLE_VISION_API_KEY")
-
-    # call the vision api
-    resp = search_image_google_vision(imagePath, GOOGLE_VISION_API_KEY)
-    
-    # write the response to a json file using json dumps
-    with open('response.json', 'w') as outfile:
-        json.dump(resp, outfile)
 
 
-    return {"message": "success"}
-
-@app.get("/")
-async def home():
-    return {"message": "This is the home route"}
-
+# performs the google search
 def perform_search(query, start):
     # this function performs the google search multiple times
     print(f"Starting at page {start}")
@@ -94,9 +84,7 @@ def perform_search(query, start):
     
     return raw_search_results
 
-"""
-ASYNC FUNCTIONS!
-"""
+
 async def fetch_html_async(url, session):
     print(f"Fetching {url}...")
     try:
@@ -118,33 +106,13 @@ async def fetch_and_extract(urls):
             json_ld = extract_json_ld(html)
             results.append(json_ld)
     return results
-"""
-END ASYNC FUNCTIONS
-"""
+
 
 async def fetch_all_html(urls):
     async with aiohttp.ClientSession() as session:
         tasks = [fetch_html_async(url, session) for url in urls]
         return await asyncio.gather(*tasks)
 
-def fetch_html(url):
-    try:
-        response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
-        response.raise_for_status()
-        return response.text
-    except Exception as e:
-        if not e.response:
-            print(f"Skipping {url} due to no status code: {e}")
-            return None
-        # if it is a 403 error, then skip since not authorized
-        if e.response.status_code == 403:
-            print(f"Skipping {url} due to 403 error (UNAUTHORIZED): {e}")
-            return None
-        if e.response.status_code == 503:
-            print(f"Skipping {url} due to 503 error (UNAVAILABLE): {e}")
-            return None
-        
-        raise HTTPException(status_code=500, detail=str(e))
 
 def extract_json_ld(html):
     soup = BeautifulSoup(html, "html.parser")
@@ -157,6 +125,16 @@ def extract_json_ld(html):
         except (json.JSONDecodeError, TypeError):
             continue
     return json_ld
+
+"""
+# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
+# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- API FUNCTION CALLS -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
+# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
+"""
+
+@app.get("/")
+async def home():
+    return {"message": "This is the home route"}
 
 
 @app.post("/search/")
@@ -215,3 +193,20 @@ async def generic_search(request: SearchRequest):
         return {"query": query, "results": raw_search_results, "productResults": productResults, "extractedData": extracted_data, "timeTaken": timeTaken}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+# search image google search 
+@app.get("/googleVisionTest")
+async def get_parse_image():
+    
+    imagePath = "test-images\image.png"
+    GOOGLE_VISION_API_KEY = os.getenv("GOOGLE_VISION_API_KEY")
+
+    # call the vision api
+    resp = search_image_google_vision(imagePath, GOOGLE_VISION_API_KEY)
+    
+    # write the response to a json file using json dumps
+    with open('response.json', 'w') as outfile:
+        json.dump(resp, outfile)
+
+
+    return {"message": "success"}
