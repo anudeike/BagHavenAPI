@@ -104,18 +104,10 @@ async def fetch_html_async(url, session):
             response.raise_for_status()
             return await response.text()
     except Exception as e:
+        
+        # save these errors somewhere else -- just to check on why they are failing
         print(f"Error fetching {url}: {e}")
         return None
-        # if not e.response:
-        #     print(f"Skipping {url} due to no status code: {e}")
-        #     return None
-        # # if it is a 403 error, then skip since not authorized
-        # if e.response.status_code == 403:
-        #     print(f"Skipping {url} due to 403 error (UNAUTHORIZED): {e}")
-        #     return None
-        # if e.response.status_code == 503:
-        #     print(f"Skipping {url} due to 503 error (UNAVAILABLE): {e}")
-        #     return None
 
 async def fetch_and_extract(urls):
     print("Fetching and extracting JSON-LD...")
@@ -205,22 +197,13 @@ async def generic_search(request: SearchRequest):
         
         beforeHTMLTime = time.time()
 
-        # get the urls for each product:
+        # get the url
         urls = [result["link"] for result in raw_search_results]
 
         extracted_data = await fetch_and_extract(urls)
 
         print(len(extracted_data))
 
-        # get the html of each product
-        # for result in raw_search_results:
-        #     resultHTML = fetch_html(result["link"])
-        #     if resultHTML is not None:
-        #         result["json_ld"] = extract_json_ld(resultHTML)
-        #     else:
-        #         print(f"Failed to fetch HTML for {result['link']}")
-        #         result["json_ld"] = None
-        
         print(f"HTML Execution Time: {time.time() - beforeHTMLTime:.2f} seconds")
         
         print(f"Raw Search Results Amount: {len(raw_search_results)}")
@@ -229,6 +212,6 @@ async def generic_search(request: SearchRequest):
         timeTaken = time.time() - startTime
         print(f"Total Execution Time: {timeTaken:.2f} seconds")
 
-        return {"query": query, "results": raw_search_results, "productResults": productResults}
+        return {"query": query, "results": raw_search_results, "productResults": productResults, "extractedData": extracted_data, "timeTaken": timeTaken}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
