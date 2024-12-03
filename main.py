@@ -12,7 +12,7 @@ import aiohttp
 import asyncio
 import firebase_admin
 from firebase_admin import credentials, firestore
-
+import logging 
 load_dotenv()
 
 app = FastAPI()
@@ -31,10 +31,43 @@ print("Initializing firestore...")
 db = firestore.client()
 print("Initializing firestore done")
 
+# configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.StreamHandler(),  # Logs to console
+    ],
+)
+
+logger = logging.getLogger("Merchant Backend API")
+
 class SearchRequest(BaseModel):
     query: str
     pages: int
 
+
+"""
+# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
+# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- HELPER FUNCTIONS -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
+# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
+"""
+
+# save to firestore - not tested yet
+def save_batch_to_firebase(data_list, collection_name="products"):
+    batch = db.batch()
+    collection_ref = db.collection(collection_name)
+    
+    for data in data_list:
+        doc_ref = collection_ref.document()  # Auto-generate document ID
+        batch.set(doc_ref, data)
+
+    # Commit the batch
+    try:
+        batch.commit()
+        print(f"Batch write completed with {len(data_list)} documents.")
+    except Exception as e:
+        print(f"Error in batch write: {e}")
 
 # google vision image search
 def search_image_google_vision(image_path, api_key):
@@ -58,8 +91,6 @@ def search_image_google_vision(image_path, api_key):
         return response.json()
     else:
         return {"error": response.text}
-
-
 
 # performs the google search
 def perform_search(query, start):
@@ -182,6 +213,13 @@ async def generic_search(request: SearchRequest):
 
         print(len(extracted_data))
 
+        extractedProductData = []
+
+        for data in extracted_data:
+            for item in data:
+                extractedProductData.append(item)
+        
+
         print(f"HTML Execution Time: {time.time() - beforeHTMLTime:.2f} seconds")
         
         print(f"Raw Search Results Amount: {len(raw_search_results)}")
@@ -189,8 +227,9 @@ async def generic_search(request: SearchRequest):
 
         timeTaken = time.time() - startTime
         print(f"Total Execution Time: {timeTaken:.2f} seconds")
+        logger.info(f"Total Execution Time: {timeTaken:.2f} seconds")
 
-        return {"query": query, "results": raw_search_results, "productResults": productResults, "extractedData": extracted_data, "timeTaken": timeTaken}
+        return {"query": query, "extractedData": extractedProductData, "timeTaken": timeTaken}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
