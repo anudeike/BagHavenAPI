@@ -102,6 +102,7 @@ def perform_search(query, start):
             "key": GOOGLE_API_KEY,
             "cx": SEARCH_ENGINE_ID_BAGHAVEN,
             "q": query,
+            "searchType": "image",
             "num": 10,
             "start": start
         }
@@ -196,13 +197,6 @@ async def generic_search(request: SearchRequest):
 
         print(f"Search Execution Time: {time.time() - beforeSearchTime:.2f} seconds")
 
-        # filter the search results by products only
-        productResults = []
-        for result in raw_search_results:
-            if result["pagemap"].get("metatags") is not None:
-                for metatag in result["pagemap"]["metatags"]:
-                    if metatag.get("og:type") == "product":
-                        productResults.append(result)
         
         beforeHTMLTime = time.time()
 
@@ -211,19 +205,22 @@ async def generic_search(request: SearchRequest):
 
         extracted_data = await fetch_and_extract(urls)
 
-        print(len(extracted_data))
+        print(f"Extracted Data Amount: {len(extracted_data)}")
 
         extractedProductData = []
 
         for data in extracted_data:
             for item in data:
+                # filter out non product data
+                if item.get("@type") != "Product":
+                    print("Skipping non product data of type:", item.get("@type"))
+                    continue
                 extractedProductData.append(item)
         
 
         print(f"HTML Execution Time: {time.time() - beforeHTMLTime:.2f} seconds")
         
         print(f"Raw Search Results Amount: {len(raw_search_results)}")
-        print(f"Product Search Results Amount: {len(productResults)}")
 
         timeTaken = time.time() - startTime
         print(f"Total Execution Time: {timeTaken:.2f} seconds")
