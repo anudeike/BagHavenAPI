@@ -121,12 +121,15 @@ async def fetch_html_async(url, session):
     print(f"Fetching {url}...")
     try:
         async with session.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=3) as response:
+            print(f"Content-Type: {response.headers['Content-Type']}")
             response.raise_for_status()
+
+            print(f"[SUCCESS] - Status code: {response.status} - {url}\n")
             return await response.text()
     except Exception as e:
         
         # save these errors somewhere else -- just to check on why they are failing
-        print(f"Error fetching {url}: {e}")
+        print(f"Error fetching {url}: {e}\n")
         return None
 
 async def fetch_and_extract(urls):
@@ -226,7 +229,7 @@ async def generic_search(request: SearchRequest):
         print(f"Total Execution Time: {timeTaken:.2f} seconds")
         logger.info(f"Total Execution Time: {timeTaken:.2f} seconds")
 
-        return {"query": query, "extractedData": extractedProductData, "timeTaken": timeTaken}
+        return {"query": query, "extractedData": extractedProductData, "timeTaken": timeTaken, "rawSearchResults": raw_search_results}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
