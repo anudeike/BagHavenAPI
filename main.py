@@ -93,7 +93,7 @@ def search_image_google_vision(image_path, api_key):
         return {"error": response.text}
 
 # performs the google search
-def perform_search(query, start):
+def perform_google_text_search(query, start):
     # this function performs the google search multiple times
     print(f"Starting at page {start}")
     try:
@@ -189,22 +189,24 @@ async def generic_search(request: SearchRequest):
     try:
         
         beforeSearchTime = time.time()
-        raw_search_results = perform_search(query, 1)
+
+        # perform google search
+        raw_search_results = perform_google_text_search(query, 1)
         
 
         # perform search the amount of pages
         for i in range(2, pagesToQuery+1):
-            raw_search_results.extend(perform_search(query, (i*10)))
+            raw_search_results.extend(perform_google_text_search(query, (i*10)))
         
+        # log search time taken
         print(f"Search Results Amount: {len(raw_search_results)}")
-
         print(f"Search Execution Time: {time.time() - beforeSearchTime:.2f} seconds")
-
         
         beforeHTMLTime = time.time()
 
-        # get the url
-        urls = [result["link"] for result in raw_search_results]
+        # we need to analyze the context links
+        print("Analyzing Context Links...")
+        urls = [result["image"]["contextLink"] for result in raw_search_results]
 
         extracted_data = await fetch_and_extract(urls)
 
@@ -214,10 +216,6 @@ async def generic_search(request: SearchRequest):
 
         for data in extracted_data:
             for item in data:
-                # filter out non product data
-                if item.get("@type") != "Product":
-                    print("Skipping non product data of type:", item.get("@type"))
-                    continue
                 extractedProductData.append(item)
         
 
@@ -229,7 +227,7 @@ async def generic_search(request: SearchRequest):
         print(f"Total Execution Time: {timeTaken:.2f} seconds")
         logger.info(f"Total Execution Time: {timeTaken:.2f} seconds")
 
-        return {"query": query, "extractedData": extractedProductData, "timeTaken": timeTaken, "rawSearchResults": raw_search_results}
+        return {"query": query, "extractedData": extracted_data, "timeTaken": timeTaken, "rawSearchResults": raw_search_results, "extractedProductData": extractedProductData}  
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
