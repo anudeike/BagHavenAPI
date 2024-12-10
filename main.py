@@ -12,7 +12,9 @@ import aiohttp
 import asyncio
 import firebase_admin
 from firebase_admin import credentials, firestore
-import logging 
+import logging
+from uuid import uuid5
+
 load_dotenv()
 
 app = FastAPI()
@@ -20,6 +22,7 @@ app = FastAPI()
 # Get all the keys from the .env file
 SEARCH_ENGINE_ID_BAGHAVEN = os.getenv("SEARCH_ENGINE_ID_BAGHAVEN")
 GOOGLE_API_KEY = os.getenv("GOOGLE_VISION_API_KEY")
+HTML_FETCH_TIMEOUT = 2
 
 # fetch firebase credentials
 print("Fetching firebase credentials...")
@@ -120,12 +123,13 @@ def perform_google_text_search(query, start):
 async def fetch_html_async(url, session):
     print(f"Fetching {url}...")
     try:
-        async with session.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=3) as response:
+        async with session.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=HTML_FETCH_TIMEOUT) as response:
             print(f"Content-Type: {response.headers['Content-Type']}")
             response.raise_for_status()
 
             print(f"[SUCCESS] - Status code: {response.status} - {url}\n")
-            return await response.text()
+            responseText = await response.text()
+            return {"url": url, "html": responseText}
     except Exception as e:
         
         # save these errors somewhere else -- just to check on why they are failing
@@ -136,10 +140,18 @@ async def fetch_and_extract(urls):
     print("Fetching and extracting JSON-LD...")
     html_list = await fetch_all_html(urls)
     results = []
-    for html in html_list:
-        if html:
-            json_ld = extract_json_ld(html)
-            results.append(json_ld)
+
+    # print(f"Results: {[(html['url'], len(html['html'])) for html in html_list if html]}\n\n")
+    
+    # create the product objects that you will send to the frontend
+    for htmlObject in html_list:
+        if htmlObject:
+
+            # create the product object from the json ld and url
+            url = htmlObject["url"]
+            html = htmlObject["html"]
+            json_ld = extract_json_ld(html, url)
+            results.extend(json_ld)
     return results
 
 
@@ -149,16 +161,28 @@ async def fetch_all_html(urls):
         return await asyncio.gather(*tasks)
 
 
-def extract_json_ld(html):
+def extract_json_ld(html, url):
     soup = BeautifulSoup(html, "html.parser")
     json_ld = []
     for script in soup.find_all("script", type="application/ld+json"):
         try:
             data = json.loads(script.string)
+
+            # # check if data is a list so that we only get lists of objects
+            # if isinstance(data, list):
+            #     data = data[0]
+            
+
+            print(f"===Extracted JSON-LD: {data}===\n===URL: {url}===\n")
             json_ld.append(data)
             print("Extracted JSON-LD...")
         except (json.JSONDecodeError, TypeError):
             continue
+    return json_ld
+
+
+def extract_product_originization_info(json_ld):
+    print("Extracting product originization info...")
     return json_ld
 
 """
@@ -192,7 +216,6 @@ async def generic_search(request: SearchRequest):
 
         # perform google search
         raw_search_results = perform_google_text_search(query, 1)
-        
 
         # perform search the amount of pages
         for i in range(2, pagesToQuery+1):
@@ -216,7 +239,7 @@ async def generic_search(request: SearchRequest):
 
         for data in extracted_data:
             for item in data:
-                extractedProductData.append(item)
+                extractedProductData.extend(item)
         
 
         print(f"HTML Execution Time: {time.time() - beforeHTMLTime:.2f} seconds")
