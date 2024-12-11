@@ -1,3 +1,4 @@
+from datetime import datetime
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from dotenv import load_dotenv
@@ -13,7 +14,8 @@ import asyncio
 import firebase_admin
 from firebase_admin import credentials, firestore
 import logging
-from uuid import uuid5
+from uuid import uuid5, NAMESPACE_DNS
+from urllib.parse import urlparse
 
 load_dotenv()
 
@@ -49,6 +51,21 @@ class SearchRequest(BaseModel):
     query: str
     pages: int
 
+# products class
+class Product(BaseModel):
+    productId: str
+    id: str
+    url: str
+    title: str
+    imageURL: str
+    description: str
+    price: float
+    seller: str
+    isOriginal: bool
+    offerType: str
+    priceCurrency: str
+    timeCreated: datetime
+    availability: str
 
 """
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
@@ -160,6 +177,10 @@ async def fetch_all_html(urls):
         tasks = [fetch_html_async(url, session) for url in urls]
         return await asyncio.gather(*tasks)
 
+def get_seller_from_url(url):
+    parsed_url = urlparse(url)
+    domain = parsed_url.netloc
+    return domain
 
 def extract_json_ld(html, url):
     soup = BeautifulSoup(html, "html.parser")
@@ -169,14 +190,50 @@ def extract_json_ld(html, url):
             data = json.loads(script.string)
 
             # # check if data is a list so that we only get lists of objects
-            # if isinstance(data, list):
-            #     data = data[0]
+            if isinstance(data, list):
+                # get only the products in the array
+                data = data[0]
+            
+            
+            
+            # we only care about Products and Organizations (TODO: Add Logic for Organizations)
+            if data.get("@type", None) != "Product":
+                print(f"Skipping {url} because it is not a product...")
+                continue
+
+            # get the seller
+            seller = "Unknown Seller"
+
+            if uid := data.get("@id", None):
+                seller = get_seller_from_url(uid)
+
+            # create a new product object
+            product = Product(
+                id=data.get("@id", None),
+                productId=uuid5(NAMESPACE_DNS, data.get("@id", None)).hex,
+                url=url,
+                title=data.get("name", "No Title"),
+                imageURL=data.get("image", [None])[0] if data.get("image") else "No Image URL",
+                description=data.get("description", "No Description"),
+                price=data.get("offers", {}).get("price", -1.0),
+                seller=seller,
+                isOriginal=data.get("isOriginal", False),
+                offerType=data.get("offers", {}).get("type", "Unknown Offer Type"),
+                priceCurrency=data.get("offers", {}).get("priceCurrency", "USD"),
+                timeCreated=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                availability=data.get("offers", {}).get("availability", "Unknown Availability")
+            )
+            print("Created Product Object...")
+            print(product.__dict__)
+
             
 
-            print(f"===Extracted JSON-LD: {data}===\n===URL: {url}===\n")
-            json_ld.append(data)
+            print(f"===Extracted JSON-LD for URL: {url}===\n")
+            json_ld.append(product.__dict__)
             print("Extracted JSON-LD...")
-        except (json.JSONDecodeError, TypeError):
+        except (json.JSONDecodeError, TypeError) as e:
+            print(f"Error parsing JSON-LD for {url}, Error Message: {e}\n")
+            print("Skipping...")
             continue
     return json_ld
 
