@@ -218,13 +218,13 @@ def extract_json_ld(html, url):
                 price=data.get("offers", {}).get("price", -1.0),
                 seller=seller,
                 isOriginal=data.get("isOriginal", False),
-                offerType=data.get("offers", {}).get("type", "Unknown Offer Type"),
+                offerType=data.get("offers", {}).get("@type", "Unknown Offer Type"),
                 priceCurrency=data.get("offers", {}).get("priceCurrency", "USD"),
                 timeCreated=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 availability=data.get("offers", {}).get("availability", "Unknown Availability")
             )
             print("Created Product Object...")
-            print(product.__dict__)
+            
 
             
 
@@ -307,7 +307,13 @@ async def generic_search(request: SearchRequest):
         print(f"Total Execution Time: {timeTaken:.2f} seconds")
         logger.info(f"Total Execution Time: {timeTaken:.2f} seconds")
 
-        return {"query": query, "extractedData": extracted_data, "timeTaken": timeTaken, "rawSearchResults": raw_search_results, "extractedProductData": extractedProductData}  
+        return {
+            "query": query, 
+            "extractedData": extracted_data, 
+            "timeTaken": timeTaken,
+            "extractedProductData": extractedProductData
+        }
+        
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
