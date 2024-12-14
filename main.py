@@ -239,8 +239,7 @@ def extract_json_ld(html, url):
 
             print(f"===Extracted JSON-LD for URL: {url}===\n")
             json_ld.append(product.__dict__)
-            print("Extracted JSON-LD...")
-        except (json.JSONDecodeError, TypeError) as e:
+        except (json.JSONDecodeError, TypeError, Exception) as e:
             print(f"Error parsing JSON-LD for {url}, Error Message: {e}\n")
             print("Skipping...")
             continue
@@ -262,7 +261,7 @@ async def home():
     return {"message": "This is the home route"}
 
 
-@app.get("/api/productSearch")
+@app.post("/api/productSearch")
 async def generic_search(request: SearchRequest):
 
     query = request.query
@@ -300,12 +299,6 @@ async def generic_search(request: SearchRequest):
         extracted_data = await fetch_and_extract(urls)
 
         print(f"Extracted Data Amount: {len(extracted_data)}")
-
-        extractedProductData = []
-
-        for data in extracted_data:
-            for item in data:
-                extractedProductData.extend(item)
         
 
         print(f"HTML Execution Time: {time.time() - beforeHTMLTime:.2f} seconds")
@@ -316,14 +309,12 @@ async def generic_search(request: SearchRequest):
         print(f"Total Execution Time: {timeTaken:.2f} seconds")
         logger.info(f"Total Execution Time: {timeTaken:.2f} seconds")
 
-        return {
-            "query": query, 
-            "extractedData": extracted_data, 
-            "timeTaken": timeTaken,
-            "extractedProductData": extractedProductData
-        }
+        # TODO: Send diagnostic info to firebase/database
+        return extracted_data
 
     except Exception as e:
+        logger.error(f"An error occurred: {e}")
+        print(e)
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/test")
