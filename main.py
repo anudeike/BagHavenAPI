@@ -16,10 +16,19 @@ from firebase_admin import credentials, firestore
 import logging
 from uuid import uuid5, NAMESPACE_DNS
 from urllib.parse import urlparse
+from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
 
 app = FastAPI()
+
+# add cors middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Your frontend URL
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Get all the keys from the .env file
 SEARCH_ENGINE_ID_BAGHAVEN = os.getenv("SEARCH_ENGINE_ID_BAGHAVEN")
@@ -253,7 +262,7 @@ async def home():
     return {"message": "This is the home route"}
 
 
-@app.post("/search/")
+@app.get("/api/productSearch")
 async def generic_search(request: SearchRequest):
 
     query = request.query
@@ -313,10 +322,17 @@ async def generic_search(request: SearchRequest):
             "timeTaken": timeTaken,
             "extractedProductData": extractedProductData
         }
-        
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
+
+@app.post("/api/test")
+async def test(request: SearchRequest):
+
+    print("Testing...")
+    print(request)    
+    return {"message": "successful test!"}
+
 # search image google search 
 @app.get("/googleVisionTest")
 async def get_parse_image():
