@@ -4,7 +4,7 @@ import json
 from urllib.parse import urljoin
 
 class BoxLunchCrawler:
-    def __init__(self, base_url='https://www.boxlunch.com/'):
+    def __init__(self, base_url='https://www.boxlunch.com/bags/mini-backpacks/?start=0&sz=100'):
         self.base_url = base_url
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
@@ -115,20 +115,61 @@ class BoxLunchCrawler:
         Returns:
             list: Collected product JSON-LD data
         """
+
+        
         all_products = []
+
+        # get all of the products on the page
         
-        # Get category pages
-        category_urls = self.get_category_pages()
-        
-        # For each category, get product URLs
-        for category_url in category_urls:
-            product_urls = self.get_products_from_category(category_url)
+        try:
+            response = requests.get(self.base_url, headers=self.headers)
+            response.raise_for_status()
             
-            # Extract JSON-LD for each product
-            for product_url in product_urls:
-                product_json_ld = self.extract_product_json_ld(product_url)
-                if product_json_ld:
-                    all_products.append(product_json_ld)
+            soup = BeautifulSoup(response.text, 'html.parser')
+            
+            # Find all product tiles
+            product_tiles = soup.find_all('div', class_='product-tile')
+            
+            # extract the product urls from the tiles
+            product_urls = []
+            
+            for tile in product_tiles:
+                # Find the image container within each product tile
+                image_container = tile.find('div', class_='image-container')
+                
+                if image_container:
+                    # Look for the link within the image container
+                    link = image_container.find('a', class_='pdpLink')
+                    
+                    
+                    if link and link.has_attr('href'):
+                        # Convert relative URL to absolute URL
+                        absolute_url = urljoin(self.base_url, link['href'])
+                        print(f"Found product URL: {absolute_url}")
+                        product_urls.append(absolute_url)
+                    else:
+                        print("No link found for product tile.")
+                else:
+                    print("No image container found for product tile.")
+                    
+
+            return product_urls
+        
+        except requests.RequestException as e:
+            print(f"Error fetching category page {self.base_url}: {e}")
+            return []
+        # # Get category pages
+        #category_urls = self.get_category_pages()
+        
+        # # For each category, get product URLs
+        # for category_url in category_urls:
+        #     product_urls = self.get_products_from_category(category_url)
+            
+        #     # Extract JSON-LD for each product
+        #     for product_url in product_urls:
+        #         product_json_ld = self.extract_product_json_ld(product_url)
+        #         if product_json_ld:
+        #             all_products.append(product_json_ld)
         
         return all_products
 
