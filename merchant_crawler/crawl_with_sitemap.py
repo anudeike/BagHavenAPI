@@ -150,3 +150,5 @@ if __name__ == '__main__':
     print("\nSample Product URLs:")
     for url in product_urls[:10]:
         print(url)
+
+    
