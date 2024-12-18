@@ -204,6 +204,8 @@ class ProductProcessor:
         Returns:
             dict: Mapping of URLs to their variant results
         """
+        self.logger.info(f"Processing {len(urls)} URLs")
+        
         results = {}
         
         for url in urls:
@@ -220,10 +222,13 @@ if __name__ == '__main__':
     
     # Initialize processor
     processor = ProductProcessor(FIREBASE_CREDENTIALS)
+
+    # crawl and get the 
     
     # Example URLs (replace with your actual URLs)
     product_urls = [
-        'https://www.boxlunch.com/product/disney-lady-and-the-tramp-lineart-womens-t-shirt/14080919.html'
+        'https://www.boxlunch.com/product/disney-lady-and-the-tramp-lineart-womens-t-shirt/14080919.html',
+        'https://www.boxlunch.com/product/funko-pop-spellbound-monster-ellsmere-vinyl-figure/32200669.html'
     ]
     
     # Process products

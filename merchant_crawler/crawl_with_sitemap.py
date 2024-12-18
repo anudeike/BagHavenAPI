@@ -4,13 +4,14 @@ import logging
 from urllib.parse import urljoin, urlparse
 
 class BoxLunchSitemapCrawler:
-    def __init__(self, base_url='https://www.boxlunch.com'):
+    def __init__(self, base_url='https://www.boxlunch.com', sitemap_url='sitemap_index.xml'):
         """
         Initialize BoxLunch sitemap crawler
         
         Args:
             base_url (str): Base URL of the website
         """
+        self.sitemap_url = sitemap_url
         self.base_url = base_url
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
@@ -90,7 +91,7 @@ class BoxLunchSitemapCrawler:
             list: Comprehensive list of product URLs
         """
         # Construct sitemap index URL
-        sitemap_index_url = urljoin(self.base_url, 'sitemap_index.xml')
+        sitemap_index_url = urljoin(self.base_url, self.sitemap_url)
         
         # Get product-specific sitemaps
         product_sitemaps = self.get_product_sitemaps(sitemap_index_url)
