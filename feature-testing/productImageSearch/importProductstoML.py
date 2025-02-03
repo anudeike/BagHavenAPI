@@ -21,17 +21,24 @@ def import_product_sets(project_id, location, gcs_source_uri, product_set_id):
     print("Processing import... this may take a while.")
     result = operation.result()  # Wait for the operation to complete
 
+    # result if of type: ImportProductSetsResponse 
+    # attributes: reference_images, statuses
+
     # Check for errors or success
-    for i, status in enumerate(result.statuses):
-        if status.code != 0:
-            print(f"Error on index {i}: {status.message}")
+    for i, res in enumerate(zip(result.reference_images, result.statuses)):
+        if res[1].code != 0:
+            print(f"Error on index {i}: {res[1].message}")
         else:
-            print(f"Imported product set: {status.reference_images}")
+            # Success
+            print(f"Imported product {i} - product name: {res[0].name}, image uri: {res[0].uri}")
+            
+
+GS_BUCKET_FILE_NAME = "demo-products-bkt/demo_product_files_noheader.csv"
 
 # Example usage
 import_product_sets(
     project_id="baghaven",
     location="us-west1",
-    gcs_source_uri="gs://demo-products-bkt/updated_demo_product_images-noweblink.csv",
+    gcs_source_uri=f"gs://{GS_BUCKET_FILE_NAME}",
     product_set_id="visualsearch-demo-product-set"
 )

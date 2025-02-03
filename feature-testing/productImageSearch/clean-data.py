@@ -31,10 +31,13 @@ example: gs://demo-product-seekeasy-images/11552290_hi
 
 df = pd.read_csv(FILE_PATH)
 
-#df["image_uri"] = df["image_uri"].apply(transfrom_image_uri)
+# export to csv with out header
+df.to_csv(f"demo_product_files_noheader.csv", index=False, header=False)
 
-df["labels"] = df["labels"].apply(clean_labels)
+# df["image_uri"] = df["image_uri"].apply(transfrom_image_uri)
+
+# df["labels"] = df["labels"].apply(clean_labels)
 
 # print(df.head(3))
-df.to_csv(OUTPUT_FILE_PATH, index=False)
+# df.to_csv(OUTPUT_FILE_PATH, index=False)
 
