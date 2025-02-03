@@ -32,6 +32,6 @@ def import_product_sets(project_id, location, gcs_source_uri, product_set_id):
 import_product_sets(
     project_id="baghaven",
     location="us-west1",
-    gcs_source_uri="gs://demo-products-bkt/top1000_firebase_products.csv",
+    gcs_source_uri="gs://demo-products-bkt/updated_demo_product_images-noweblink.csv",
     product_set_id="visualsearch-demo-product-set"
 )
